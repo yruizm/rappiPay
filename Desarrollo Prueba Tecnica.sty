@@ -1,0 +1,107 @@
+COMPONENTE PRÁCTICO (Funcional)
+
+1) Redactar las siguientes consultas en SQL
+
+
+a. Seleccione el total de estudiantes Masculinos registrados
+SELECT COUNT(*) AS total_masculinos
+FROM STUDENTS
+WHERE GENDER = 'M';
+
+b. Elimine los estudiantes nacidos antes del 2000
+DELETE FROM STUDENTS
+WHERE BIRTHDATE < '2000-01-01';
+
+
+c. Actualice la descripción de la carrera con id '10026'
+UPDATE CAREERS
+SET DESCRIPTION = 'Administración de Empresas'
+WHERE CAREER_ID = 10026;
+
+
+d. Muestre los nombres de los estudiantes que estén cursando dos o más materias
+SELECT S.NAME
+FROM STUDENTS S
+JOIN CAREER_STUDENT CS ON S.STUDENT_ID = CS.STUDENT_ID
+GROUP BY S.STUDENT_ID, S.NAME
+HAVING COUNT(CS.CAREER_ID) >= 2;
+
+
+e. Calificación promedio de todos los estudiantes que estén cursando carreras
+SELECT AVG(CALIFICATION) AS promedio_calificacion
+FROM CAREER_STUDENT
+WHERE END_DATE IS NULL;
+
+f. Muestra el nombre, carrera id, correos de los estudiantes que tienen una calificación mayor a 70
+SELECT S.NAME, CS.CAREER_ID, S.EMAIL
+FROM STUDENTS S
+JOIN CAREER_STUDENT CS ON S.STUDENT_ID = CS.STUDENT_ID
+WHERE CS.CALIFICATION > 70;
+
+g. ¿Cuántos estudiantes están cursando 2 o más carreras?
+SELECT COUNT(*) AS estudiantes_con_2_o_mas_carreras
+FROM (    
+    SELECT STUDENT_ID
+    FROM CAREER_STUDENT
+    GROUP BY STUDENT_ID
+    HAVING COUNT(CAREER_ID) >= 2
+) AS subconsulta;
+
+2.De la imagen que esta en la prueba, reporte al menos un bug que incluya todos los datos que considere relevantes para que un desarrollador pueda replicarlo y solucionarlo.
+Titulo. Metodo de Pago Duplicado
+Descripción. El metodo de Pago RappiCuenta se encuentra Duplicado, lo que puedo generar dudas al momento del pago y afectar la imagen del negocio frente al usuario final
+Ambiente. QA
+Credenciales de Ambiente. NA
+Paso a Paso. 
+    -Agregar productos al carrito
+    -Continuar Proceso de Compra confirmando la direccion de entrega
+    -Seleccionar Metododo de Pago 
+Resultado Actual. Se esta duplicado un metodo de pago
+Resultado Esperado. Que Se encuentre disponible unicamente los metodos de Pago: RappiCuenta o debito - RappiCard y los otros metodos de pagos se visualicen correctamente (Programa tus pagos, Pagos con PSE, Paga con Daviplata)
+Severidad. Media, no bloquea el flujo genera un impacto negativo al usuario final al causar confusion, al ver metodos de pagos duplicados
+
+
+COMPONENTE TEÓRICO (Automation)
+
+1. ¿Cuáles son las principales diferencias entre automatizar en Android vs iOS con Appium?
+    R/. Los drivers que se usan UiAutomator2 para Android y XCUITest para IOS; que para automatizar Android puedo usar una maquina con SO Windows, Linux o Mac. Pero para automatización de IOS; obligatoriamente debo contar con un SO Mac.
+2. ¿Cómo diseñaría un framework de automatización para mobile multiplataforma que sea mantenible y escalable?
+    R/. Utilizaria un Patron como ScreenPlay; apoyaria lineamientos de buenas practicas por parte d desarrollo como el uso en ambas plataformas de identificadores unicos accessibility id y en los casos que no sea posible Utilizaria combinacion de mapeos por plataforma para el mismo elemento Ejemplo: .locatedForAndroid y .locatedForIOS
+3. ¿Qué criterios usa para seleccionar qué casos se deben automatizar y cuáles no?
+    R/.Tengo en Cuenta, Criticidad e importancia para el negocio, repetibilidad y complejidad manual. Con estos criterios decido que nos va a generar un mejor ROI y cuales son los escenarios que deben asegurarse para no detener el negocio
+4. ¿Qué estrategias aplicaría para integrar pruebas automáticas en un pipeline CI/CD?
+    R/. Lo que hago es generar un stage dentro del pipeline alojado al repositorio del microservicio, para que cada vez que se haga una PR se gatille la eejcucion del pipeline de prueba y dependiendo de los resultados, se apruebe la integraci´´on de ese cambio o no. Esto nos permite detectar errores tempranos y sacar el mayor provecho a la automatizacion (Usandola)
+5. Mencione las ventajas y desventajas de trabajar con dispositivos físicos vs. dispositivos en remoto / granja de dispositivos cuando ejecuta una suite de automatización.
+    R/. Dispositivos Fisicos: Ventajas: Alta velocidad, mayor fiabilidad y se evitan problemas de renderizado de aplicaciones  / Desventajas: Monitoreo y presencia humana, no ideales para procesos de CI y CD; mejor solo para desarollo de la automatizacion en local
+        Dispositivos en remoto / granjas: Ventajas: ideales para CI y CD, no requieren ser monitoreados, facil configuracion y escalamiento / Desventajas: Pueden ser mas lentos y generan mayor costo 
+6. ¿Qué patrones de diseño ha implementado en sus proyectos que considere eficaces para minimizar la duplicación de código y mejorar la legibilidad al desarrollar automatizaciones para dispositivos móviles?
+    R/. ScreenPlay y POM; el mas recomendado es ScreenPlay porque si se usa correctamente haciendo una buena gestion de cada una de las capas del patron, respetando principios SOLID y usando herramientas como SonarQ (Local y Central) se pueden obtener buenas practicas de codificacion y aplicacion de mejores tecnicas y herramientas que permitan mantener un proyecto escalable, amntenible y vigente a lo largo del tiempo
+
+
+
+COMPONENTE PRÁCTICO (Automation)
+
+Contexto: Se requiere implementar un nuevo script para una prueba automatizada. El caso de prueba involucra tres (3) vistas: Home del App, Login y el Home de producto. El flujo que se desea automatizar valida que el usuario Ingrese al Home del App donde da un tap al widget del producto para posteriormente ser redireccionado al Login. Allí ingresará un código de 6 dígitos y finalmente navegará de forma automática al Home del producto donde se encuentra el detalle y acciones que el usuario puede realizar sobre el producto.
+a) En la vista de Login se implementa un método para validar que todos los labels definidos en el diseño se encuentren presentes. A continuación verá el código implementado.
+
+Usar Thread.sleep(15000); e una muy mala practica, hace que la ejecucion se demore mas, aqui inicialmente una espera implicita para esperar a que el elemento este listo, porque ademas esa espera no garantiza que el elemeto esta presente o listo para usarse; y cuando la espera puede ser de milisegundos o segundos, se fuerza a que sea estatica.
+Usar un Wait.until() y validamos que sea visible el primer elemento, con esto podemos eliminar el Thread.sleep
+
+Separaria cada validacion, convirtiendo cada uno en una assersion () donde valide que el elemento es visible; porque hacerlo asi para que me indique especificamente que elemento fallo; podria hacerlo en bloque pero el resultado que obtendria seria; los elementos de la pagina no cargaron, pero si lo hago uno a uno puedo obtener la excepcion especificar
+Validar uno a uno Ventaja rompe la ejecucion y dice especificamente cual no esta
+
+Validar en bloque Ventaja mas rapido pero no da el detalle
+
+b) En la vista del Home del App, se necesita crear dos métodos: El primero estará encargado de verificar si el usuario se encuentra o no en el Home del App y el segundo realizará la acción de dar tap en el botón de Rappipay para ingresar al login. A continuación verá la definición de los elementos que se tuvieron en cuenta.
+
+NO HAY UNA ESTRATEGIA MULTIPLATAFORMA
+Convencion unica BTN_MENU, LBL_RESTAURANT
+
+Sino hay conflictos con los IDs, que puedean resultar en ambiguedades.. Lo mejor es simplificarlos
+
+ De esto: @AndroidFindBy(id = "com.grability.rappi:id/menu_image") 
+ A Esto: @AndroidFindBy(id = "menu_image") 
+
+ Por otro lado un xpath que contega una cadena de caracteres puede resultar flojo; ID, Accessibility o xpath exacto
+
+ @AndroidFindBy(xpath = "//android.widget.TextView[@text='Turbo']"), esto aunque funcione solo para android es mas preciso, robusto y confiable y se puede hacer un metodo generico que se pueda reutilizar
