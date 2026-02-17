@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><testsuite errors="1" failures="0" name="Pruebas Saucelabs" skipped="0" tests="1" time="31.54" timestamp="2026-02-16 06:52:05"><testcase name="Login Exitoso"><error message="After several attempts, could not instantiate new WebDriver instance of type class io.appium.java_client.AppiumDriver (Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure. &#10;Host info: host: 'DESKTOP-HHPGPLA', ip: '192.168.1.4'&#10;Build info: version: '4.27.0', revision: 'd6e718d134'&#10;System info: os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '17.0.18'&#10;Driver info: org.openqa.selenium.remote.RemoteWebDriver&#10;Command: [null, newSession {capabilities=[Capabilities {}]}]&#10;Capabilities {}). See below for more details." type="net.thucydides.core.webdriver.DriverConfigurationError">After several attempts, could not instantiate new WebDriver instance of type class io.appium.java_client.AppiumDriver (Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure. 
+Host info: host: 'DESKTOP-HHPGPLA', ip: '192.168.1.4'
+Build info: version: '4.27.0', revision: 'd6e718d134'
+System info: os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '17.0.18'
+Driver info: org.openqa.selenium.remote.RemoteWebDriver
+Command: [null, newSession {capabilities=[Capabilities {}]}]
+Capabilities {}). See below for more details.</error><system-err>After several attempts, could not instantiate new WebDriver instance of type class io.appium.java_client.AppiumDriver (Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure. 
+Host info: host: 'DESKTOP-HHPGPLA', ip: '192.168.1.4'
+Build info: version: '4.27.0', revision: 'd6e718d134'
+System info: os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '17.0.18'
+Driver info: org.openqa.selenium.remote.RemoteWebDriver
+Command: [null, newSession {capabilities=[Capabilities {}]}]
+Capabilities {}). See below for more details.&#13;
+rappipay.appium.test.stepdefinitions.AutenticationSaucelabs.queElUsuarioAbreLaAplicación(AutenticationSaucelabs.java:29)&#13;
+worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69)&#13;
+worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74)&#13;
+</system-err></testcase></testsuite>

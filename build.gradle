@@ -1,0 +1,110 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath "net.serenity-bdd:serenity-gradle-plugin:4.2.8"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: "net.serenity-bdd.serenity-gradle-plugin"
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+group 'rappipay.appium.screenplay'
+version '1.0'
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    serenityVersion = '4.2.8'
+    serenityCucumberVersion = '4.2.8'
+    appiumVersion = '9.3.0'
+    cucumberVersion = '7.18.1'
+    lombokVersion = '1.18.34'
+    seleniumVersion = '4.27.0'
+}
+
+dependencies {
+    // Appium
+    implementation "io.appium:java-client:${appiumVersion}"
+
+    // Serenity BDD - Todas en la misma versión
+    implementation "net.serenity-bdd:serenity-core:${serenityVersion}"
+    implementation "net.serenity-bdd:serenity-screenplay:${serenityVersion}"
+    implementation "net.serenity-bdd:serenity-screenplay-webdriver:${serenityVersion}"
+    implementation "net.serenity-bdd:serenity-screenplay-rest:${serenityVersion}"
+    implementation "net.serenity-bdd:serenity-cucumber:${serenityCucumberVersion}"
+    implementation "net.serenity-bdd:serenity-junit:${serenityVersion}"
+    implementation "net.serenity-bdd:serenity-ensure:${serenityVersion}"
+
+    // Selenium (sin devtools específico - Serenity lo maneja)
+    implementation "org.seleniumhq.selenium:selenium-java:${seleniumVersion}"
+
+    // Cucumber
+    implementation "io.cucumber:cucumber-java:${cucumberVersion}"
+    implementation "io.cucumber:datatable:${cucumberVersion}"
+
+    // SLF4J para logging
+    implementation "org.slf4j:slf4j-simple:2.0.9"
+
+    // Otros
+    implementation "javax.xml.bind:jaxb-api:2.3.1"
+
+    // Lombok
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+}
+
+test {
+    testLogging {
+        showStandardStreams = true
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+
+    systemProperties System.properties
+
+// Forzar configuración
+    systemProperty "webdriver.driver", "appium"
+    systemProperty "webdriver.remote.url", "http://localhost:4723"
+    systemProperty "appium.platformName", "Android"
+    systemProperty "appium.automationName", "UIAutomator2"
+    systemProperty "appium.deviceName", "emulator-5554"
+
+    def hasPropertyValue = project.hasProperty('runner')
+    if (hasPropertyValue) {
+        systemProperty "runner", findProperty("runner")
+        def runner = "${runner}".split(",")
+        for (run in runner) {
+            include "**/" + run + ".class"
+        }
+    } else {
+        println 'Running all tests'
+    }
+
+    maxParallelForks = 1
+    forkEvery = 1
+}
+
+gradle.startParameter.continueOnFailure = true
+
+test.finalizedBy(aggregate)
+
+// Tarea para limpiar reportes anteriores
+clean {
+    delete "target"
+}
